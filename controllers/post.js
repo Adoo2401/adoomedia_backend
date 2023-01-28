@@ -11,10 +11,14 @@ export const uploadPost=async(req,resp)=>{
 
         const user=await User.findById(req.user._id);
 
-        const file64=formatBufferTo64(req.file);
+        let picturePath=null;
 
-        const uploadResult=await cloudinary.v2.uploader.upload(file64.content,{folder:"posts"});
+        if(req.file){
+            const file64=formatBufferTo64(req.file);
+            picturePath=await cloudinary.v2.uploader.upload(file64.content,{folder:"posts"});
+        }
 
+        
         const newPost=new Post({
             userId:req.user._id,
             firstName:user.firstName,
@@ -22,7 +26,7 @@ export const uploadPost=async(req,resp)=>{
             location:user.location,
             description,
             userPicturePath:user.picturePath.url,
-            picturePath:uploadResult,
+            picturePath:picturePath,
             likes:{},
             comments:[]
         })
@@ -43,10 +47,10 @@ export const getFeedPosts=async(req,resp)=>{
     try {
         
       const posts=await Post.find();
-      resp.status(200).json({posts})
+      resp.status(200).json({success:true,message:posts})
 
     } catch (error) {
-        resp.status(500).json({msg:error.message});        
+        resp.status(500).json({success:false,message:error.message});        
     }
 }
 
@@ -54,10 +58,10 @@ export const getUserPosts=async(req,resp)=>{
     try {
         
      const posts=await Post.find({userId:req.params.userId});
-     resp.status(200).json({posts})
+     resp.status(200).json({success:true,message:posts})
 
     } catch (error) {
-        resp.status(500).json({msg:error.message});
+        resp.status(500).json({success:false,message:error.message});
     }
 }
 
@@ -77,9 +81,9 @@ export const likePost=async(req,resp)=>{
        }
 
        const updatedPost=await Post.findByIdAndUpdate(id,{likes:post.likes},{new:true});
-       resp.status(200).json(updatedPost);
+       resp.status(200).json({success:true,message:updatedPost});
 
     } catch (error) {
-        resp.status(500).json({msg:error.message});
+        resp.status(500).json({success:true,message:error.message});
     }
 }

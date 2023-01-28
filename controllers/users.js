@@ -69,9 +69,9 @@ export const addRemoveFriend=async(req,resp)=>{
             return {_id,firstName,lastName,occupation,location,picturePath};
         })
 
-        resp.status(200).json(formattedFriends)
+        resp.status(200).json({success:true,message:formattedFriends})
 
     } catch (error) {
-        resp.status(500).json({message:error.message})
+        resp.status(500).json({success:false,message:error.message})
     }
 }
