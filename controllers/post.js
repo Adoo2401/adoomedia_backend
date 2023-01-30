@@ -33,7 +33,10 @@ export const uploadPost=async(req,resp)=>{
 
         await newPost.save();
 
-        const posts=await Post.find();
+        let posts;
+
+        if (req.query.loggedInUser) { posts=await Post.find({userId:req.user._id}); }
+        else { posts=await Post.find() }
 
         return resp.status(200).json({success:true,message:posts})
 
