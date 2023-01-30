@@ -6,7 +6,7 @@ import formatBufferTo64 from "../utils/formatBufferTo64.js";
 
 export const uploadPost=async(req,resp)=>{
     try {
-        
+       
         const {description}=req.body;
 
         const user=await User.findById(req.user._id);
@@ -35,7 +35,7 @@ export const uploadPost=async(req,resp)=>{
 
         let posts;
 
-        if (req.query.loggedInUser) { posts=await Post.find({userId:req.user._id}); }
+        if (req.query.loggedInUser=='true') { posts=await Post.find({userId:req.user._id}); }
         else { posts=await Post.find() }
 
         return resp.status(200).json({success:true,message:posts})
